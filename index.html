@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ficha de Notificação de Violência</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      margin: 0;
+      padding: 20px;
+    }
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 800px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #333;
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 5px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .btn {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <form id="fichaForm">
+    <h2>1. Identificação da Pessoa</h2>
+    <div class="form-group">
+      <label for="nome">Nome completo</label>
+      <input type="text" id="nome" name="nome" required>
+    </div>
+    <div class="form-group">
+      <label for="sexo">Sexo</label>
+      <select id="sexo" name="sexo">
+        <option value="">Selecione</option>
+        <option value="feminino">Feminino</option>
+        <option value="masculino">Masculino</option>
+        <option value="outro">Outro</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="idade">Idade</label>
+      <input type="number" id="idade" name="idade" min="0">
+    </div>
+
+    <h2>2. Dados do Atendimento</h2>
+    <div class="form-group">
+      <label for="data_atendimento">Data do Atendimento</label>
+      <input type="date" id="data_atendimento" name="data_atendimento">
+    </div>
+    <div class="form-group">
+      <label for="unidade">Unidade Notificadora</label>
+      <input type="text" id="unidade" name="unidade">
+    </div>
+
+    <h2>3. Tipo de Violência</h2>
+    <div class="form-group">
+      <label for="tipo_violencia">Tipo</label>
+      <select id="tipo_violencia" name="tipo_violencia">
+        <option value="">Selecione</option>
+        <option value="fisica">Física</option>
+        <option value="sexual">Sexual</option>
+        <option value="psicologica">Psicológica</option>
+        <option value="negligencia">Negligência/Abandono</option>
+        <option value="financeira">Financeira/Econômica</option>
+        <option value="outra">Outra</option>
+      </select>
+    </div>
+
+    <h2>4. Informações do Agressor</h2>
+    <div class="form-group">
+      <label for="relacao_agressor">Relação com a vítima</label>
+      <input type="text" id="relacao_agressor" name="relacao_agressor">
+    </div>
+
+    <h2>5. Conduta e Encaminhamentos</h2>
+    <div class="form-group">
+      <label for="encaminhamentos">Encaminhamentos realizados</label>
+      <textarea id="encaminhamentos" name="encaminhamentos" rows="4"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="assinatura">Assinatura do Profissional</label>
+      <input type="text" id="assinatura" name="assinatura" placeholder="Nome e matrícula do profissional">
+    </div>
+
+    <button type="submit" class="btn">Gerar PDF</button>
+  </form>
+
+  <script>
+    document.getElementById('fichaForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const {{ jsPDF }} = window.jspdf;
+      const doc = new jsPDF();
+
+      const form = event.target;
+      let y = 10;
+
+      const dataHora = new Date().toLocaleString('pt-BR');
+
+      doc.setFontSize(14);
+      doc.text("Ficha de Notificação de Violência", 10, y);
+      y += 10;
+      doc.setFontSize(10);
+      doc.text(`Data/Hora de geração: ${dataHora}`, 10, y);
+      y += 10;
+
+      const addField = (label, value) => {
+        doc.setFontSize(11);
+        doc.text(`${label}: ${value || ''}`, 10, y);
+        y += 8;
+      };
+
+      addField("Nome", form.nome.value);
+      addField("Sexo", form.sexo.value);
+      addField("Idade", form.idade.value);
+      addField("Data do Atendimento", form.data_atendimento.value);
+      addField("Unidade Notificadora", form.unidade.value);
+      addField("Tipo de Violência", form.tipo_violencia.value);
+      addField("Relação com a vítima", form.relacao_agressor.value);
+      addField("Encaminhamentos", form.encaminhamentos.value);
+      addField("Assinatura do Profissional", form.assinatura.value);
+
+      doc.save("ficha-de-violencia.pdf");
+    });
+  </script>
+</body>
+</html>
