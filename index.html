@@ -119,41 +119,43 @@
   </form>
 
   <script>
-    document.getElementById('fichaForm').addEventListener('submit', function(event) {
-      event.preventDefault();
+    window.addEventListener('DOMContentLoaded', () => {
+      const { jsPDF } = window.jspdf;
 
-      const {{ jsPDF }} = window.jspdf;
-      const doc = new jsPDF();
+      document.getElementById('fichaForm').addEventListener('submit', function(event) {
+        event.preventDefault();
 
-      const form = event.target;
-      let y = 10;
+        const doc = new jsPDF();
+        const form = event.target;
+        let y = 10;
+        const dataHora = new Date().toLocaleString('pt-BR');
 
-      const dataHora = new Date().toLocaleString('pt-BR');
+        doc.setFontSize(14);
+        doc.text("Ficha de Notificação de Violência", 10, y);
+        y += 10;
+        doc.setFontSize(10);
+        doc.text(`Data/Hora de geração: ${dataHora}`, 10, y);
+        y += 10;
 
-      doc.setFontSize(14);
-      doc.text("Ficha de Notificação de Violência", 10, y);
-      y += 10;
-      doc.setFontSize(10);
-      doc.text(`Data/Hora de geração: ${dataHora}`, 10, y);
-      y += 10;
+        const addField = (label, value) => {
+          doc.setFontSize(11);
+          const lines = doc.splitTextToSize(`${label}: ${value || ''}`, 180);
+          doc.text(lines, 10, y);
+          y += lines.length * 8;
+        };
 
-      const addField = (label, value) => {
-        doc.setFontSize(11);
-        doc.text(`${label}: ${value || ''}`, 10, y);
-        y += 8;
-      };
+        addField("Nome", form.nome.value);
+        addField("Sexo", form.sexo.value);
+        addField("Idade", form.idade.value);
+        addField("Data do Atendimento", form.data_atendimento.value);
+        addField("Unidade Notificadora", form.unidade.value);
+        addField("Tipo de Violência", form.tipo_violencia.value);
+        addField("Relação com a vítima", form.relacao_agressor.value);
+        addField("Encaminhamentos", form.encaminhamentos.value);
+        addField("Assinatura do Profissional", form.assinatura.value);
 
-      addField("Nome", form.nome.value);
-      addField("Sexo", form.sexo.value);
-      addField("Idade", form.idade.value);
-      addField("Data do Atendimento", form.data_atendimento.value);
-      addField("Unidade Notificadora", form.unidade.value);
-      addField("Tipo de Violência", form.tipo_violencia.value);
-      addField("Relação com a vítima", form.relacao_agressor.value);
-      addField("Encaminhamentos", form.encaminhamentos.value);
-      addField("Assinatura do Profissional", form.assinatura.value);
-
-      doc.save("ficha-de-violencia.pdf");
+        doc.save("ficha-de-violencia.pdf");
+      });
     });
   </script>
 </body>
